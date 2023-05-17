@@ -1,0 +1,49 @@
+USERS: {
+  shape: sql_table
+
+  # FIELDS
+  user_id: int {constraint: primary_key}
+  name: string
+  surname: string
+  phone_number: string
+  avatar: string
+  # ...
+}
+
+CHATS: {
+  shape: sql_table
+
+  # FIELDS
+  chat_id: int {constraint: primary_key}
+  isavailable: bool
+  number_of_people: int
+  number_of_messages: int
+  # ...
+}
+
+# Merged table of user-chat -- many-to-many
+CHAT_PARTICIPANTS: {
+  shape: sql_table
+
+  # FIELDS
+  participant_id: int {constraint: primary_key}
+  user_id: int {constraint: foreign_key}
+  chat_id: int {constraint: foreign_key}
+  # ...
+}
+
+CHAT_PARTICIPANTS_ROLE: {
+  shape: sql_table
+
+  role_id: int {constraint: primary_key}
+  participant_id: int {constraint: foreign_key}
+  role: string
+}
+
+
+
+USERS -> CHAT_PARTICIPANTS
+CHATS -> CHAT_PARTICIPANTS
+
+CHAT_PARTICIPANTS -> CHAT_PARTICIPANTS_ROLE
+
