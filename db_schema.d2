@@ -1,12 +1,13 @@
+#MAIN ENTITIES
 USERS: {
   shape: sql_table
 
   # FIELDS
   user_id: int {constraint: primary_key}
-  name: string
-  surname: string
-  phone_number: string
-  avatar: string
+  name: int {constraint: foreign_key}
+  surname: {constraint: foreign_key}
+  phone_number: {constraint: foreign_key}
+  avatar: {constraint: foreign_key}
   # ...
 }
 
@@ -40,10 +41,120 @@ CHAT_PARTICIPANTS_ROLE: {
   role: string
 }
 
+MESSAGES: {
+  #Represents a message entity
+  shape: sql_table
+  
+  #FIELDS
+  message_id: int {constraint: primary_key}
+  user_id: int {constraint: foreign_key}
+  chat_id: int{constraint: foreign_key}
+  message_text: string
+  time_stamp: datetime
+}
 
 
-USERS -> CHAT_PARTICIPANTS
-CHATS -> CHAT_PARTICIPANTS
+# RELATIONSHIPS
 
-CHAT_PARTICIPANTS -> CHAT_PARTICIPANTS_ROLE
+USERS ->  USERS_ATTRIBUTES:{
+  source-arrowhead: 1
+  target-arrowhead: 1 {
+    shape: cf-one-required
+    style.filled: true
+  } 
+}
 
+
+ 
+USERS -> CHAT_PARTICIPANTS:{
+  style: {
+    stroke-dash: 3   
+  }
+  source-arrowhead: 1
+  target-arrowhead: 0..* {
+    shape: cf-many
+    style.filled: true    
+  } 
+}
+
+CHATS ->CHAT_PARTICIPANTS:{
+  style: {
+    stroke-dash: 3   
+  }
+  source-arrowhead: 1
+  target-arrowhead: 0..* {
+    shape: cf-many
+    style.filled: true
+  } 
+}
+
+
+CHAT_PARTICIPANTS -> CHAT_PARTICIPANTS_ROLE:{
+  source-arrowhead: 1
+  target-arrowhead: 0..* {
+    shape: cf-many
+    style.filled: true
+  } 
+}
+
+
+USERS -> MESSAGES:{
+  source-arrowhead: 1
+  target-arrowhead: 0..* {
+    shape: cf-many
+    style.filled: true
+  } 
+}
+
+ 
+ 
+
+CHATS -> MESSAGES:{
+  source-arrowhead: 1
+  target-arrowhead: 0..* {
+    shape: cf-many
+    style.filled: true
+  } 
+}
+
+# ISOLATED TABLES
+
+USERS_ATTRIBUTES: { 
+  #Kepps users attributes like name, surname, phone, avatar etc.
+  
+  shape: stored_data
+
+
+  NAMES: { 
+    #keeps the table of various names
+    shape: sql_table
+
+    name_id: int {constraint: primary_key}
+    name: string {constraint: unique}
+  }
+
+  SURNAMES: {
+    #keeps the table of various surnames
+    shape: sql_table
+
+    surname_id: int {constraint: primary_key}
+    surname: string {constraint: unique}
+  }
+
+  PHONES:{
+    #keeps the table of unique phones
+    shape: sql_table
+
+    phone_id: int {constraint: primary_key}
+    phone_number: string {constraint: unique}
+  }
+
+  AVATARS:{
+    #keeps the table of avatars
+    shape: sql_table
+
+    avatar_id: int {constraint: primary_key}
+    url: string {constraint: unique}
+  }
+
+}
