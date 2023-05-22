@@ -4,10 +4,11 @@ USERS: {
 
   # FIELDS
   user_id: int {constraint: primary_key}
-  name: int {constraint: foreign_key}
-  surname: {constraint: foreign_key}
-  phone_number: {constraint: foreign_key}
-  avatar: {constraint: foreign_key}
+  name_id: int {constraint: foreign_key}
+  surname_id: {constraint: foreign_key}
+  email_id: {constraint: foreign_key}
+  phone_number_id: {constraint: foreign_key}
+  avatar_id: {constraint: foreign_key}
   # ...
 }
 
@@ -54,8 +55,36 @@ MESSAGES: {
 }
 
 
-# RELATIONSHIPS
+ORGANIZATIONS: {
+  shape: sql_table
 
+  #FIELDS
+  organization_id: int {constraint: primary_key}
+  name: string
+}
+
+ORGANIZATIONS_STAFF:{
+  shape: sql_table
+
+  #FIELDS
+  staff_id: int {constraint: primary_key}
+  user_id(O): int? {constraint: foreign_key} #a personel can be in an organization, but not registred as a user
+  role_id: int {constraint: foreign_key}  
+  name: string
+  lastname: string
+  position: string  
+}
+
+ORGANIZATIONS_ROLES:{
+  shape: sql_table
+
+  #FIELDS
+  role_id: int {constraint: primary_key}
+  role: string  
+}
+
+
+# RELATIONSHIPS
 USERS ->  USERS_ATTRIBUTES:{
   source-arrowhead: 1
   target-arrowhead: 1 {
@@ -117,8 +146,36 @@ CHATS -> MESSAGES:{
   } 
 }
 
-# ISOLATED TABLES
 
+ORGANIZATIONS -> ORGANIZATIONS_STAFF:{
+  source-arrowhead: 1
+  target-arrowhead: 0..* {
+    shape: cf-many
+    style.filled: true
+  } 
+}
+
+ORGANIZATIONS_STAFF -> USERS:{
+  #staff member has 0 or 1 account, therefore it is zero or one relationship
+  source-arrowhead: 1
+  target-arrowhead: 0..1 {
+    shape: cf-one
+    style.filled: true
+  } 
+}
+
+
+ORGANIZATIONS_STAFF -> ORGANIZATIONS_ROLES:{
+   #staff member has one organization role 
+   source-arrowhead: 1
+   target-arrowhead: 1 {
+     shape: cf-one
+     style.filled: true
+   } 
+}
+
+
+# ISOLATED TABLES
 USERS_ATTRIBUTES: { 
   #Kepps users attributes like name, surname, phone, avatar etc.
   
@@ -147,6 +204,14 @@ USERS_ATTRIBUTES: {
 
     phone_id: int {constraint: primary_key}
     phone_number: string {constraint: unique}
+  }
+
+  EMAILS:{
+    #keeps the table of avatars
+    shape: sql_table
+
+    email_id: int {constraint: primary_key}
+    email: string {constraint: unique}
   }
 
   AVATARS:{
