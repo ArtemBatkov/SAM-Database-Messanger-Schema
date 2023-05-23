@@ -68,6 +68,7 @@ ORGANIZATIONS_STAFF:{
 
   #FIELDS
   staff_id: int {constraint: primary_key}
+  organization_id: int {constraint: foreign_key}
   user_id(O): int? {constraint: foreign_key} #a personel can be in an organization, but not registred as a user
   role_id: int {constraint: foreign_key}  
   name: string
@@ -85,8 +86,11 @@ ORGANIZATIONS_ROLES:{
 
 
 # RELATIONSHIPS
-USERS ->  USERS_ATTRIBUTES:{
-  source-arrowhead: 1
+USERS <->  USERS_ATTRIBUTES:{
+  source-arrowhead: 1 {
+    shape: cf-one-required
+    style.filled: true
+  } 
   target-arrowhead: 1 {
     shape: cf-one-required
     style.filled: true
@@ -147,31 +151,42 @@ CHATS -> MESSAGES:{
 }
 
 
-ORGANIZATIONS -> ORGANIZATIONS_STAFF:{
-  source-arrowhead: 1
-  target-arrowhead: 0..* {
+ORGANIZATIONS <-> ORGANIZATIONS_STAFF:{
+  source-arrowhead: {
+    shape: cf-one-required
+    style.filled: true 
+  }
+  target-arrowhead: 1..* {
     shape: cf-many
     style.filled: true
   } 
 }
 
-ORGANIZATIONS_STAFF -> USERS:{
+ORGANIZATIONS_STAFF <-> USERS:{
   #staff member has 0 or 1 account, therefore it is zero or one relationship
-  source-arrowhead: 1
+  source-arrowhead: 1 {
+    shape: cf-one-required
+    style.filled: true
+  } 
   target-arrowhead: 0..1 {
-    shape: cf-one
+    shape: cf-one-required
     style.filled: true
   } 
 }
 
 
-ORGANIZATIONS_STAFF -> ORGANIZATIONS_ROLES:{
+ORGANIZATIONS_STAFF <-> ORGANIZATIONS_ROLES:{
    #staff member has one organization role 
-   source-arrowhead: 1
+   source-arrowhead: 1 {
+    shape: cf-one-required
+    style.filled: true
+  } 
+
    target-arrowhead: 1 {
-     shape: cf-one
-     style.filled: true
+    shape: cf-one-required
+    style.filled: true
    } 
+
 }
 
 
